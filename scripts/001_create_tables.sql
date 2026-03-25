@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   posts_count INTEGER DEFAULT 0,
   followers_count INTEGER DEFAULT 0,
   following_count INTEGER DEFAULT 0,
+  last_login TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   CONSTRAINT username_length CHECK (char_length(username) >= 3 AND char_length(username) <= 30),

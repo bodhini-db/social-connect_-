@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { loginSchema } from '@/lib/validation'
 import { getProfileByUsername } from '@/lib/db/users'
 
@@ -31,19 +31,22 @@ export async function POST(request: Request) {
           { status: 401 }
         )
       }
-      
-      // Get the email from auth.users via admin client
-      const supabase = await createClient()
-      const { data: userData } = await supabase.auth.admin?.getUserById(profile.id) || { data: null }
-      
-      if (!userData?.user?.email) {
-        // Fall back to trying the identifier as email
+
+      // Get the email from auth.users via the admin client (needs service role key)
+      try {
+        const adminSupabase = await createAdminClient()
+        const { data: userData, error: userError } = await adminSupabase.auth.admin.getUserById(profile.id)
+
+        if (!userError && userData?.user?.email) {
+          email = userData.user.email
+        } else {
+          email = identifier
+        }
+      } catch {
         email = identifier
-      } else {
-        email = userData.user.email
       }
     }
-    
+
     const supabase = await createClient()
     
     // Sign in with email and password
@@ -66,13 +69,19 @@ export async function POST(request: Request) {
       )
     }
     
+    // Update last_login timestamp on profile (if field exists)
+    await supabase
+      .from('profiles')
+      .update({ last_login: new Date().toISOString() })
+      .eq('id', authData.user.id)
+
     // Fetch the user's profile
     const { data: profile } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', authData.user.id)
       .single()
-    
+
     return NextResponse.json({
       user: profile,
       access_token: authData.session?.access_token,

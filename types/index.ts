@@ -11,6 +11,7 @@ export interface Profile {
   posts_count: number;
   followers_count: number;
   following_count: number;
+  last_login?: string | null;
   created_at: string;
   updated_at: string;
 }
