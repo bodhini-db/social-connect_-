@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+
+export const dynamic = 'force-dynamic'
 import { Spinner } from '@/components/ui/spinner'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Sparkles, ArrowLeft, CheckCircle } from 'lucide-react'
