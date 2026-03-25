@@ -1,4 +1,4 @@
-# SocialConnect (v0-social-connect-app-build)
+# SocialConnect (social-connect_-)
 
 SocialConnect is a full-stack social media web app built with Next.js + TypeScript, Supabase, Tailwind CSS, and shadcn/ui. It meets the provided assignment rubric for Authentication, Profile management, Posts (text + image), Likes, Comments, Follow, and feed.
 
