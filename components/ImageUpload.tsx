@@ -87,12 +87,14 @@ export function ImageUpload({ bucket, onUploaded, onCancel }: ImageUploadProps) 
   if (preview) {
     return (
       <div className="space-y-3">
-        <div className="relative">
-          <img
-            src={preview}
-            alt="Preview"
-            className="max-h-48 rounded-lg object-cover"
-          />
+        <div className="relative overflow-hidden rounded-lg bg-muted/10">
+          <div className="aspect-square w-full">
+            <img
+              src={preview}
+              alt="Preview"
+              className="h-full w-full object-cover"
+            />
+          </div>
           <Button
             variant="destructive"
             size="icon"

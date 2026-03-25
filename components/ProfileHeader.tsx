@@ -44,9 +44,9 @@ export function ProfileHeader({ profile, currentUserId, isFollowing = false }: P
         <div className="flex justify-end pb-4">
           {isOwnProfile ? (
             <Button variant="outline" asChild>
-              <Link href="/profile/edit">
+              <Link href="/settings">
                 <Settings className="mr-2 h-4 w-4" />
-                Edit Profile
+                Settings
               </Link>
             </Button>
           ) : currentUserId ? (

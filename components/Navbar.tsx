@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetTrigger,
 } from '@/components/ui/sheet'
@@ -30,11 +31,13 @@ interface NavbarProps {
 export function Navbar({ user }: NavbarProps) {
   const router = useRouter()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
     const supabase = createClient()
     await supabase.auth.signOut()
+    setIsMobileMenuOpen(false)
     router.push('/login')
     router.refresh()
   }
@@ -45,15 +48,27 @@ export function Navbar({ user }: NavbarProps) {
     return (first + last).toUpperCase() || profile.username[0].toUpperCase()
   }
 
-  const NavLinks = ({ mobile = false }: { mobile?: boolean }) => (
+  const NavLinks = ({ mobile = false, onLinkClick }: { mobile?: boolean; onLinkClick?: () => void }) => (
     <>
-      <Button variant="ghost" size={mobile ? "default" : "sm"} asChild className={mobile ? "justify-start" : ""}>
+      <Button
+        variant="ghost"
+        size={mobile ? "default" : "sm"}
+        asChild
+        className={mobile ? "justify-start" : ""}
+        onClick={onLinkClick}
+      >
         <Link href="/feed" className="flex items-center gap-2">
           <Home className="h-4 w-4" />
           <span>Feed</span>
         </Link>
       </Button>
-      <Button variant="ghost" size={mobile ? "default" : "sm"} asChild className={mobile ? "justify-start" : ""}>
+      <Button
+        variant="ghost"
+        size={mobile ? "default" : "sm"}
+        asChild
+        className={mobile ? "justify-start" : ""}
+        onClick={onLinkClick}
+      >
         <Link href="/users" className="flex items-center gap-2">
           <Users className="h-4 w-4" />
           <span>Discover</span>
@@ -131,7 +146,7 @@ export function Navbar({ user }: NavbarProps) {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/profile/edit" className="flex items-center gap-2">
+                      <Link href="/settings" className="flex items-center gap-2">
                         <Settings className="h-4 w-4" />
                         <span>Settings</span>
                       </Link>
@@ -151,14 +166,14 @@ export function Navbar({ user }: NavbarProps) {
 
               {/* Mobile Menu */}
               <div className="md:hidden">
-                <Sheet>
+                <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                   <SheetTrigger asChild>
                     <Button variant="ghost" size="icon" className="h-9 w-9">
                       <Menu className="h-5 w-5" />
                       <span className="sr-only">Open menu</span>
                     </Button>
                   </SheetTrigger>
-                  <SheetContent side="right" className="w-80">
+                  <SheetContent side="left" className="w-80">
                     <div className="flex flex-col gap-6 mt-6">
                       <div className="flex items-center gap-3 pb-4 border-b">
                         <Avatar className="h-12 w-12">
@@ -174,18 +189,18 @@ export function Navbar({ user }: NavbarProps) {
                       </div>
 
                       <nav className="flex flex-col gap-2">
-                        <NavLinks mobile />
+                        <NavLinks mobile onLinkClick={() => setIsMobileMenuOpen(false)} />
                       </nav>
 
                       <div className="flex flex-col gap-2 pt-4 border-t">
-                        <Button variant="ghost" asChild className="justify-start">
+                        <Button variant="ghost" asChild className="justify-start" onClick={() => setIsMobileMenuOpen(false)}>
                           <Link href={`/profile/${user.username}`}>
                             <User className="mr-2 h-4 w-4" />
                             Profile
                           </Link>
                         </Button>
-                        <Button variant="ghost" asChild className="justify-start">
-                          <Link href="/profile/edit">
+                        <Button variant="ghost" asChild className="justify-start" onClick={() => setIsMobileMenuOpen(false)}>
+                          <Link href="/settings">
                             <Settings className="mr-2 h-4 w-4" />
                             Settings
                           </Link>

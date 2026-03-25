@@ -37,12 +37,27 @@ export function EditProfileForm({ profile }: EditProfileFormProps) {
     return (first + last).toUpperCase() || profile.username[0].toUpperCase()
   }
 
+  const normalizeWebsite = (website: string) => {
+    const trimmed = website.trim()
+    if (!trimmed) return ''
+    if (/^[a-zA-Z][a-zA-Z0-9+\-.]*:\/\//.test(trimmed)) {
+      return trimmed
+    }
+    return `https://${trimmed}`
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
+    const normalizedWebsite = normalizeWebsite(formData.website || '')
+    const dataToSubmit = {
+      ...formData,
+      website: normalizedWebsite,
+    }
+
     // Validate
-    const result = profileUpdateSchema.safeParse(formData)
+    const result = profileUpdateSchema.safeParse(dataToSubmit)
     if (!result.success) {
       toast.error(result.error.errors[0]?.message || 'Invalid data')
       setIsLoading(false)
@@ -53,7 +68,7 @@ export function EditProfileForm({ profile }: EditProfileFormProps) {
       const response = await fetch('/api/users/me', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSubmit),
       })
 
       if (!response.ok) {

@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { LikeButton } from '@/components/LikeButton'
 import { MessageCircle, MoreHorizontal, Trash2, Heart, Share2 } from 'lucide-react'
+import { toast } from 'sonner'
 import type { PostWithAuthor } from '@/types'
 
 interface PostCardProps {
@@ -36,6 +37,27 @@ export function PostCard({ post, currentUserId, onDelete, showFullContent = fals
     if (!onDelete) return
     if (!confirm('Are you sure you want to delete this post?')) return
     onDelete(post.id)
+  }
+
+  const handleShare = async () => {
+    const postUrl = `${window.location.origin}/posts/${post.id}`
+    const shareData = {
+      title: `${post.author?.first_name || post.author?.username || 'User'} on SocialConnect`,
+      text: `${post.content.slice(0, 120)}${post.content.length > 120 ? '...' : ''}`,
+      url: postUrl,
+    }
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData)
+        toast.success('Post shared successfully!')
+      } else {
+        await navigator.clipboard.writeText(postUrl)
+        toast.success('Link copied to clipboard!')
+      }
+    } catch (error) {
+      toast.error('Unable to share right now. Please try again.')
+    }
   }
 
   return (
@@ -123,7 +145,12 @@ export function PostCard({ post, currentUserId, onDelete, showFullContent = fals
             <span className="sm:hidden">{post.comment_count > 0 ? post.comment_count : ''}</span>
           </Link>
         </Button>
-        <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors ml-auto">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-2 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors ml-auto"
+          onClick={handleShare}
+        >
           <Share2 className="h-4 w-4" />
           <span className="hidden sm:inline">Share</span>
         </Button>
