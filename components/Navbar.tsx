@@ -173,7 +173,7 @@ export function Navbar({ user }: NavbarProps) {
                       <span className="sr-only">Open menu</span>
                     </Button>
                   </SheetTrigger>
-                  <SheetContent side="left" className="w-80">
+                  <SheetContent side="right" className="w-80">
                     <div className="flex flex-col gap-6 mt-6">
                       <div className="flex items-center gap-3 pb-4 border-b">
                         <Avatar className="h-12 w-12">
