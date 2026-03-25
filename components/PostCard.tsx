@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { LikeButton } from '@/components/LikeButton'
-import { MessageCircle, MoreHorizontal, Trash2 } from 'lucide-react'
+import { MessageCircle, MoreHorizontal, Trash2, Heart, Share2 } from 'lucide-react'
 import type { PostWithAuthor } from '@/types'
 
 interface PostCardProps {
@@ -39,28 +39,28 @@ export function PostCard({ post, currentUserId, onDelete, showFullContent = fals
   }
 
   return (
-    <Card className="transition-shadow hover:shadow-md">
-      <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-3">
-        <Link href={`/profile/${post.author?.username}`}>
-          <Avatar className="h-10 w-10 cursor-pointer transition-opacity hover:opacity-80">
+    <Card className="group border-border/40 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1">
+      <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-4">
+        <Link href={`/profile/${post.author?.username}`} className="group/avatar">
+          <Avatar className="h-12 w-12 cursor-pointer ring-2 ring-transparent transition-all duration-300 group-hover/avatar:ring-primary/20 group-hover/avatar:scale-105">
             <AvatarImage src={post.author?.avatar_url || undefined} alt={post.author?.username} />
-            <AvatarFallback className="bg-primary text-primary-foreground">
+            <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground font-semibold">
               {getInitials()}
             </AvatarFallback>
           </Avatar>
         </Link>
-        <div className="flex flex-1 flex-col">
+        <div className="flex flex-1 flex-col min-w-0">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
               <Link
                 href={`/profile/${post.author?.username}`}
-                className="font-semibold hover:underline"
+                className="font-semibold hover:text-primary transition-colors truncate"
               >
                 {post.author?.first_name} {post.author?.last_name}
               </Link>
               <Link
                 href={`/profile/${post.author?.username}`}
-                className="text-sm text-muted-foreground"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors truncate"
               >
                 @{post.author?.username}
               </Link>
@@ -68,11 +68,11 @@ export function PostCard({ post, currentUserId, onDelete, showFullContent = fals
             {isOwnPost && onDelete && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="backdrop-blur-sm bg-background/95">
                   <DropdownMenuItem
                     onClick={handleDelete}
                     className="text-destructive focus:text-destructive"
@@ -90,36 +90,42 @@ export function PostCard({ post, currentUserId, onDelete, showFullContent = fals
         </div>
       </CardHeader>
 
-      <CardContent className="pb-3">
-        <Link href={`/posts/${post.id}`} className="block">
-          <p className={`whitespace-pre-wrap ${showFullContent ? '' : 'line-clamp-6'}`}>
+      <CardContent className="pb-4">
+        <Link href={`/posts/${post.id}`} className="block group/content">
+          <p className={`whitespace-pre-wrap text-foreground/90 leading-relaxed ${showFullContent ? '' : 'line-clamp-6'} group-hover/content:text-foreground transition-colors`}>
             {post.content}
           </p>
         </Link>
         {post.image_url && (
-          <div className="relative mt-3 aspect-video overflow-hidden rounded-lg bg-muted">
+          <div className="relative mt-4 aspect-video overflow-hidden rounded-xl bg-muted/50 shadow-inner">
             <Image
               src={post.image_url}
               alt="Post image"
               fill
-              className="object-cover"
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
         )}
       </CardContent>
 
-      <CardFooter className="gap-4 border-t pt-3">
+      <CardFooter className="gap-2 border-t border-border/40 pt-4">
         <LikeButton
           postId={post.id}
           initialLiked={post.is_liked_by_me || false}
           initialCount={post.like_count}
           isAuthenticated={!!currentUserId}
         />
-        <Button variant="ghost" size="sm" asChild className="gap-2 text-muted-foreground">
+        <Button variant="ghost" size="sm" asChild className="gap-2 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors">
           <Link href={`/posts/${post.id}`}>
             <MessageCircle className="h-4 w-4" />
-            <span>{post.comment_count}</span>
+            <span className="hidden sm:inline">{post.comment_count}</span>
+            <span className="sm:hidden">{post.comment_count > 0 ? post.comment_count : ''}</span>
           </Link>
+        </Button>
+        <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors ml-auto">
+          <Share2 className="h-4 w-4" />
+          <span className="hidden sm:inline">Share</span>
         </Button>
       </CardFooter>
     </Card>

@@ -9,6 +9,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
+import { ThemeToggle } from '@/components/theme-toggle'
+import { Sparkles, ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function LoginPage() {
@@ -70,19 +72,42 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <Link href="/" className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
-            <span className="text-lg font-bold text-primary-foreground">SC</span>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center px-4">
+      {/* Background decoration */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000" />
+      </div>
+
+      {/* Header */}
+      <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+        <Button variant="ghost" size="sm" asChild className="backdrop-blur-sm bg-background/50 hover:bg-background/80">
+          <Link href="/" className="flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back home
           </Link>
-          <CardTitle className="text-2xl">Welcome back</CardTitle>
-          <CardDescription>Sign in to your SocialConnect account</CardDescription>
+        </Button>
+        <ThemeToggle />
+      </div>
+
+      <Card className="w-full max-w-md border-border/40 bg-card/50 backdrop-blur-sm shadow-2xl">
+        <CardHeader className="space-y-1 text-center pb-6">
+          <Link href="/" className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 shadow-lg hover:scale-105 transition-transform duration-300">
+            <Sparkles className="h-7 w-7 text-primary-foreground" />
+          </Link>
+          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
+            Welcome back
+          </CardTitle>
+          <CardDescription className="text-muted-foreground">
+            Sign in to your SocialConnect account
+          </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="identifier">Email or Username</Label>
+              <Label htmlFor="identifier" className="text-sm font-medium">
+                Email or Username
+              </Label>
               <Input
                 id="identifier"
                 type="text"
@@ -91,11 +116,20 @@ export default function LoginPage() {
                 onChange={(e) => setFormData(prev => ({ ...prev, identifier: e.target.value }))}
                 required
                 disabled={isLoading}
+                className="h-11 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
               />
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-sm font-medium">
+                  Password
+                </Label>
+                <Link
+                  href="/forgot-password"
+                  className="text-xs text-primary hover:underline transition-colors"
+                >
+                  Forgot password?
+                </Link>
               </div>
               <Input
                 id="password"
@@ -105,18 +139,29 @@ export default function LoginPage() {
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                 required
                 disabled={isLoading}
+                className="h-11 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </CardContent>
-          <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? <Spinner className="mr-2 h-4 w-4" /> : null}
-              Sign in
+          <CardFooter className="flex flex-col gap-4 pt-6">
+            <Button
+              type="submit"
+              className="w-full h-11 shadow-lg hover:shadow-xl transition-all duration-300"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Spinner className="mr-2 h-4 w-4" />
+                  Signing in...
+                </>
+              ) : (
+                'Sign in'
+              )}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
               {"Don't have an account?"}{' '}
-              <Link href="/register" className="text-primary hover:underline">
-                Sign up
+              <Link href="/register" className="text-primary hover:underline font-medium transition-colors">
+                Create one here
               </Link>
             </p>
           </CardFooter>
